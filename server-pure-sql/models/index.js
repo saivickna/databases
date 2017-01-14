@@ -1,42 +1,11 @@
-var Sequelize = require('sequelize');
-var db = new Sequelize('chatter', 'root', '');
-/* TODO this constructor takes the database name, username, then password.
- * Modify the arguments if you need to */
-
-/* first define the data structure by giving property names and datatypes
- * See http://sequelizejs.com for other datatypes you can use besides STRING. */
-var User = db.define('users', {
-  id: {
-    type: Sequelize.INTEGER,
-    primaryKey: true
-  },
-  user: Sequelize.STRING
-});
-
-var Room = db.define('rooms', {
-  id: {
-    type: Sequelize.INTEGER,
-    primaryKey: true
-  },
-  room: Sequelize.STRING
-});
-
-var Message = db.define('messages', {
-  id: {
-    type: Sequelize.INTEGER,
-    primaryKey: true
-  },
-  message: Sequelize.STRING
-});
-
-Message.belongsTo(User, {as: 'user'});
-Message.belongsTo(Room, {as: 'room'});
+var db = require('../db/index');
+db.connect();
 
 module.exports = {
   messages: {
-    get: function () {
-      return Message.findAll({attributes: ['user', 'room', 'message'], include: [User, Room]});
-      //db.query('select u.user, r.room, m.message from messages m inner join users u on (m.userID = u.id) inner join rooms r on (m.roomID = r.ID)', [], callback);
+    get: function (callback) {
+
+      db.query('select u.user, r.room, m.message from messages m inner join users u on (m.userID = u.id) inner join rooms r on (m.roomID = r.ID)', [], callback);
       //db.query('SELECT * FROM rooms', [], callback);
     }, // a function which produces all the messages
     post: function (message, callback) {
@@ -51,16 +20,12 @@ module.exports = {
 
   users: {
     // Ditto as above.
-    get: function () {
-      return User.findAll({attributes: ['user']});
-      //db.query('select user from users', callback);
+    get: function (callback) {
+
+      db.query('select user from users', callback);
 
     },
     post: function (user, callback) {
-      User.findAll({attributes: ['user'], where: {user: user}})
-      .then(users => {
-        
-      });
       db.query('select id from users where user = "' + user + '"', (err, results) => {
         if (results.length === 0) {
           db.query('insert into users (user) values ("' + user + '")', () => {        
@@ -75,9 +40,9 @@ module.exports = {
 
   rooms: {
     // Ditto as above.
-    get: function () {
-      return Room.findAll({attributes: ['room']});
-      //db.query('select room from rooms', callback);
+    get: function (callback) {
+
+      db.query('select room from rooms', callback);
 
     },
     post: function (room, callback) {
