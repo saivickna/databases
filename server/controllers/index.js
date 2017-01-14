@@ -1,4 +1,5 @@
 var models = require('../models/index');
+var Promise = require('bluebird');
 
 var headers = {
   'access-control-allow-origin': '*',
@@ -12,10 +13,8 @@ module.exports = {
   messages: {
     get: function (req, res) {
       //res.writeHead(200, headers);
-      models.messages.get((err, results) => {
-        if (err) {
-          throw err;
-        }
+      models.messages.get()
+      .then(results => {
         headers['Content-Length'] = Buffer.byteLength(JSON.stringify(results));
         res.set(headers);
         res.send(JSON.stringify(results));
@@ -23,10 +22,8 @@ module.exports = {
     }, // a function which handles a get request for all messages
     post: function (req, res) {
       res.writeHead(201, headers);
-      models.messages.post(req.body, (err, results) => {
-        if (err) {
-          throw err;
-        }
+      models.messages.post(req.body)
+      .then(results => {
         res.end();
       });
     } // a function which handles posting a message to the database
@@ -36,21 +33,16 @@ module.exports = {
     // Ditto as above
     get: function (req, res) {
       res.writeHead(200, headers);
-      models.users.get((err, results) => {
-        if (err) {
-          throw err;
-        }
+      models.users.get()
+      .then(results => {
         res.send(JSON.stringify(results));
       });
     },
     post: function (req, res) {
       res.writeHead(201, headers);
-      models.users.post(req.body.username, (err, results) => {
-        if (err) {
-          throw err;
-        }
+      models.users.post(req.body.username)
+      .then(results => {
         res.end();
-        //res.send('');
       });
 
     }
@@ -60,20 +52,15 @@ module.exports = {
     // Ditto as above
     get: function (req, res) {
       res.writeHead(200, headers);
-      models.rooms.get((err, results) => {
-        if (err) {
-          throw err;
-        }
+      models.rooms.get()
+      .then(results => {
         res.send(JSON.stringify(results));
       });
     },
     post: function (req, res) {
       res.writeHead(201, headers);
-
-      models.rooms.post(req.body.roomname, (err, results) => {
-        if (err) {
-          throw err;
-        }
+      models.rooms.post(req.body.roomname)
+      .then(results => {
         res.end();
       });
     }

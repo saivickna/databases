@@ -5,6 +5,7 @@ var mysql = require('mysql');
 var request = require('request'); // You might need to npm install the request module!
 var expect = require('chai').expect;
 
+
 describe('Persistent Node Chat Server', function() {
   var dbConnection;
 
@@ -83,8 +84,9 @@ describe('Persistent Node Chat Server', function() {
         console.log(body);
         // console.log(response);
         var messageLog = JSON.parse(body);
+        console.log(messageLog[0]);
         expect(messageLog[0].message).to.equal('Men like you can never change!');
-        expect(messageLog[0].room).to.equal('main');
+        expect(messageLog[0].room.room).to.equal('main');
         done();
       });
     });
